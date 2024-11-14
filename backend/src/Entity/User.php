@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -25,6 +27,21 @@ class User
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
+
+    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Address::class, orphanRemoval: true)]
+    private Collection $addresses;
+
+    #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Phones::class, orphanRemoval: true)]
+    private Collection $phones;
+
+    #[ORM\OneToOne(mappedBy: 'user_id', cascade: ['persist', 'remove'])]
+    private ?UserStep $userStep = null;
+
+    public function __construct()
+    {
+        $this->addresses = new ArrayCollection();
+        $this->phones = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -75,6 +92,87 @@ class User
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Address>
+     */
+    public function getAddresses(): Collection
+    {
+        return $this->addresses;
+    }
+
+    public function addAddress(Address $address): static
+    {
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): static
+    {
+        if ($this->addresses->removeElement($address)) {
+            if ($address->getUserId() === $this) {
+                $address->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Phones>
+     */
+    public function getPhones(): Collection
+    {
+        return $this->phones;
+    }
+
+    public function addPhone(Phones $phone): static
+    {
+        if (!$this->phones->contains($phone)) {
+            $this->phones->add($phone);
+            $phone->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhone(Phones $phone): static
+    {
+        if ($this->phones->removeElement($phone)) {
+            // set the owning side to null (unless already changed)
+            if ($phone->getUserId() === $this) {
+                $phone->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUserStep(): ?UserStep
+    {
+        return $this->userStep;
+    }
+
+    public function setUserStep(?UserStep $userStep): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($userStep === null && $this->userStep !== null) {
+            $this->userStep->setUserId(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($userStep !== null && $userStep->getUserId() !== $this) {
+            $userStep->setUserId($this);
+        }
+
+        $this->userStep = $userStep;
 
         return $this;
     }

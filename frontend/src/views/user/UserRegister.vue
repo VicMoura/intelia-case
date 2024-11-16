@@ -1,61 +1,17 @@
 <template>
-  <FormsComponent 
-    title="Cadastrar" 
-    @submit="cadastro"
-  >
-    <div>
-      <v-stepper  v-model="step" style="box-shadow: none">
-        <v-stepper-header style="box-shadow: none">
-          <v-stepper-step :complete="step > 1" step="1"></v-stepper-step>
-          <v-divider></v-divider>
-          <v-stepper-step :complete="step > 2" step="2"></v-stepper-step>
-          <v-divider></v-divider>
-          <v-stepper-step step="3"></v-stepper-step>
-        </v-stepper-header>
+  <v-expand-transition>
+    <component :is="currentStepComponent" :key="step" ref="stepComponent" @submit="cadastro" @voltar="voltar"/>
+  </v-expand-transition>
 
-        <v-stepper-items>
-          <v-expand-transition>
-            <component 
-              :is="currentStepComponent" 
-              :key="step"
-            />
-          </v-expand-transition>
-        </v-stepper-items>
-      </v-stepper>
-    </div>
-
-    <template #actions>
-      <v-btn 
-        dark
-        color="primary"
-        class="action-button"
-        type="submit"
-      >
-        {{ nameButtonLabel }}
-      </v-btn>
-
-      <v-btn 
-        dark
-        color="primary"
-        class="action-button ml-0"
-        outlined
-        @click="voltar"
-      >
-        Voltar
-      </v-btn>
-    </template>
-  </FormsComponent>
 </template>
 
 <script>
-import FormsComponent from '@/components/forms/FormsComponent.vue';
 import StepOneComponent from '@/components/forms/register/StepOneComponent.vue';
 import StepTwoComponent from '@/components/forms/register/StepTwoComponent.vue';
 import StepThreeComponent from '@/components/forms/register/StepThreeComponent.vue';
 
 export default {
   components: {
-    FormsComponent,
     StepOneComponent,
     StepTwoComponent,
     StepThreeComponent,
@@ -79,8 +35,12 @@ export default {
 
   methods: {
     cadastro() {
-      if (this.step < 3) this.step++;
+      if (this.step < 3) {
+        this.step++;
+      }
+
       this.saveInLocalStorage();
+
     },
 
     voltar() {
@@ -98,12 +58,3 @@ export default {
 };
 </script>
 
-<style scoped>
-
-.action-button {
-  width: 90%;
-  margin-bottom: 1rem;
-}
-
-
-</style>

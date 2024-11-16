@@ -1,28 +1,51 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <v-content>
+      <v-container fluid fill-height>
+        <v-layout align-center justify-center>
+          <v-flex xs12 sm8 md6 lg4 xl3>
+            <transition>
+              <v-expand-transition>
+                  <router-view />
+              </v-expand-transition>
+            </transition>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
+  </v-app>
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
+
+  },
+
+  data() {
+    return {
+      email: "",
+      password: "",
+      rules: {
+        required: value => !!value || 'Digite o email'
+      }
+    }
+  },
+
+  methods: {
+    login() {
+    },
+
+    register() {
+      this.$nextTick(() => {
+        this.$router.push({ name: 'UserRegister' });
+      });
+    }
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>

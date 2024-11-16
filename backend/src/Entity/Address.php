@@ -108,4 +108,29 @@ class Address
 
         return $this;
     }
+
+    public function detail(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'user_id' => $this->getUserId()->getId(),
+            'street' => $this->getStreet(),
+            'number' => $this->getNumber(),
+            'zip_code' => $this->getZipCode(),
+            'city' => $this->getCity(),
+            'state' => $this->getState(),
+        ];
+    }
+
+
+    public function toArray(): array
+    {
+        return [
+            'street' => $this->getStreet(),
+            'number' => $this->getNumber(),
+            'city' => $this->getCity(),
+            'state' => $this->getState(),
+            'zip_code' => $this->getZipcode(),
+        ];
+    }
 }

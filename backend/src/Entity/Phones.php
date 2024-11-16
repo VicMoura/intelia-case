@@ -17,10 +17,10 @@ class Phones
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user_id = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20)]  // Adicionando unique=true para phone_type
     private ?string $phone_type = null;
 
-    #[ORM\Column(length: 15)]
+    #[ORM\Column(length: 15)]  // Adicionando unique=true para phone_number
     private ?string $phone_number = null;
 
     public function getId(): ?int
@@ -62,5 +62,27 @@ class Phones
         $this->phone_number = $phone_number;
 
         return $this;
+    }
+
+    // Método Detail
+    public function detail(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'user_id' => $this->getUserId()->getId(),
+            'phone_type' => $this->getPhoneType(),
+            'phone_number' => $this->getPhoneNumber(),
+        ];
+    }
+
+
+    // Método Detail
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'phone_type' => $this->getPhoneType(),
+            'phone_number' => $this->getPhoneNumber(),
+        ];
     }
 }

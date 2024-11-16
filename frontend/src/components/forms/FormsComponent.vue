@@ -1,6 +1,6 @@
 <template>
     <v-card class="elevation-12">
-        <v-form @submit.prevent="submit">
+        <v-form ref="form" @submit.prevent="$emit('submit')">
             <v-toolbar :height="'auto'" style="min-height: 110px">
                 <v-spacer />
                     <img class="mt-2" src="@/assets/logo.png" alt="Logo" />
@@ -45,15 +45,13 @@ export default {
 
     data() {
         return {
-
         }
     },
 
     methods: {
-        submit() {
-            console.log('ihh');
-            this.$emit("submit");
-        },
+        validate() {
+            return this.$refs.form.validate();
+        }
     }
 }
 </script>

@@ -1,53 +1,92 @@
 <template>
-    <v-container>
+    <FormsComponent 
+      title="Cadastrar"
+      ref="form"
+    >
       <v-text-field 
         prepend-inner-icon="mdi-phone" 
-        name="zip_code" 
         label="Telefone fixo" 
         outlined
-        v-mask="mask"
-        v-model="phone"
+        v-mask="maskTel"
+        v-model="model.telephone"
+        :rules="[vRequired]"
         >
       </v-text-field>
 
       <v-text-field 
         prepend-inner-icon="mdi-phone" 
-        name="zip_code" 
         label="Telefone Celular" 
         outlined
+        v-model="model.celular"
         v-mask="mask"
-        v-model="phone"
         >
       </v-text-field>
+
+      <template #actions>
+            <v-btn 
+              dark
+              color="primary"
+              class="action-button"
+              @click="handleSubmit"
+              
+            >
+              Continuar 
+            </v-btn>
+
+            <v-btn 
+              dark
+              color="primary"
+              class="action-button ml-0"
+              outlined
+              @click="$emit('voltar')"
+            >
+              Voltar
+            </v-btn>
+          </template>
     
-    </v-container>
+    </FormsComponent>
   
   
   </template>
   
   
   <script>
+
+  import FormsComponent from '../FormsComponent.vue';
+
   export default {
     name: 'StepThreeComponent',
+
+    components : {
+        FormsComponent
+    },
   
     data() {
       return {
-        item : '',
-        data: '',
-        phone: ''
+        model : {
+            telephone : '',
+            celular : ''
+        }
       };
     },
     computed : {
         mask() {
-            //Retirando mask 
-            let phoneOnlyNumbers = this.phone.replace(/[\s()-]/g, '');
             
-            return phoneOnlyNumbers.length > 10 ? '(##) #####-####' : '(##) ####-####';
+            let phoneOnlyNumbers = this.model.celular.replace(/[\s()-]/g, '');
+            
+            return phoneOnlyNumbers.length > 10 ? this.maskTelCel : this.maskTel;
         }
     },
     methods: {
-  
-    },
+        async handleSubmit() {
+            const isValid = await this.$refs.form.validate(); 
+            if (isValid) {
+                this.$emit('submit', this.model); 
+            } else {
+                console.error('Formulário inválido!');
+            }
+            }
+        },
 
 
   };

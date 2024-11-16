@@ -1,10 +1,10 @@
 <template>
-  <FormsComponent title="INTELIA" @submit="login" >
+  <FormsComponent title="INTELIA">
 
     <span class="text-decoration-none"> Faça o login para entrar no sistema</span>
 
-    <v-text-field class="mt-5" prepend-inner-icon="mdi-account" name="email" label="Email" v-model="email" type="text" outlined
-      :rules="[rules.required]"></v-text-field>
+    <v-text-field class="mt-5" prepend-inner-icon="mdi-account" name="email" label="Email" v-model="email" type="text"
+      outlined :rules="[rules.required]"></v-text-field>
 
     <v-text-field class="mb-2" prepend-inner-icon="mdi-lock" name="senha" label="Senha" type="password" outlined
       hide-details></v-text-field>
@@ -44,16 +44,14 @@ export default {
   },
 
   methods: {
-    login() {
-      console.log('Login efetuado');
-    },
 
     register() {
       this.$nextTick(() => {
         this.$router.push({ name: 'UserRegister' });
       });
     }
-  }
+  },
+
 }
 </script>
 

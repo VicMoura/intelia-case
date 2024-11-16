@@ -21,28 +21,17 @@ class PhonesRepository extends ServiceEntityRepository
         parent::__construct($registry, Phones::class);
     }
 
-//    /**
-//     * @return Phones[] Returns an array of Phones objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findPhonesByUserId(int $userId): array
+    {
+        // Cria a consulta para buscar todos os telefones para o usuário especificado
+        $qb = $this->createQueryBuilder('p')
+                ->where('p.user_id = :user_id')
+                ->setParameter('user_id', $userId)
+                ->getQuery();
 
-//    public function findOneBySomeField($value): ?Phones
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        // Executa a consulta e retorna todos os telefones encontrados
+        return $qb->getResult();
+    }
+
+
 }

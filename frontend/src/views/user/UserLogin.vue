@@ -46,9 +46,9 @@ export default {
   methods: {
 
     register() {
-      this.$nextTick(() => {
+
         this.$router.push({ name: 'UserRegister' });
-      });
+      
     }
   },
 

@@ -6,9 +6,17 @@
           <v-flex xs12 sm8 md6 lg4 xl3>
             <transition>
               <v-expand-transition>
-                  <router-view />
+                <router-view />
               </v-expand-transition>
             </transition>
+
+            <!--Aviso gerado durante o sistema, sua configuração encontra no helpers/aviso.js-->
+            <v-dialog :value="$root.gAviso" @input="$root.gAviso = $event" max-width="450">
+              <v-alert prominent border="left" :value="true" :type="($root.gAvisoError) ? 'error' : 'success'"
+                class="ma-0">
+                <div v-html="$root.gAvisoMsg"></div> <!-- Usando v-html para permitir HTML -->
+              </v-alert>
+            </v-dialog>
           </v-flex>
         </v-layout>
       </v-container>

@@ -60,6 +60,19 @@ Vue.mixin({
 
         vPositive(v){
            return v < 0 ? 'O número precisa ser positivo.' : true
+        },
+
+        vValidDate(v) {
+            const date = moment(v, "DD/MM/YYYY", true);
+            return date.isValid() ? true : "Data inválida!";
+        },
+
+        vIsAdult(v) {
+            const date = moment(v, "DD/MM/YYYY", true);
+
+            const today = moment();
+            const age = today.diff(date, "years");
+            return age >= 18 ? true : "Você precisa ter pelo menos 18 anos!";
         }
     }
 })

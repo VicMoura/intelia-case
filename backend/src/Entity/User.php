@@ -43,24 +43,6 @@ class User
         $this->phones = new ArrayCollection();
     }
 
-    public function detail(): array
-    {
-        return [
-            'id' => $this->getId(),
-            'full_name' => $this->getFullName(),
-            'birth_date' => $this->getBirthDate()?->format('Y-m-d'),
-            'created_at' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
-            'updated_at' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
-            'addresses' => $this->getAddresses()->map(function ($address) {
-                return $address->toArray(); // Certifique-se de que Address também tenha o método toArray()
-            })->toArray(),
-            'phones' => $this->getPhones()->map(function ($phone) {
-                return $phone->toArray(); // Certifique-se de que Phones também tenha o método toArray()
-            })->toArray(),
-        ];
-    
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -193,5 +175,24 @@ class User
         $this->userStep = $userStep;
 
         return $this;
+    }
+
+
+    public function detail(): array
+    {
+        $address = $this->getAddresses()->last();
+        
+        return [
+            'id' => $this->getId(),
+            'full_name' => $this->getFullName(),
+            'birth_date' => $this->getBirthDate()?->format('d/m/Y'),
+            'created_at' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            'address' => $address ? $address->toArray() + ['id' => $address->getId()] : null,
+            'phones' => $this->getPhones()->map(function ($phone) {
+                return $phone->toArray();
+            })->toArray(),
+        ];
+    
     }
 }

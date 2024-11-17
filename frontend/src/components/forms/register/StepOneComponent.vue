@@ -1,29 +1,40 @@
 <template>
-  <FormsComponent title="Cadastrar" ref="form">
-    <v-text-field 
-      prepend-inner-icon="mdi-account" 
-      v-model="modelLocal.full_name" 
-      label="Nome completo" 
-      type="text" 
-      outlined 
+  <FormsComponent title="Cadastrar" ref="form" :currentStep="currentStep">
+    <v-text-field
+      prepend-inner-icon="mdi-account"
+      v-model="user.full_name"
+      label="Nome completo"
+      type="text"
+      outlined
       :rules="[vRequired]"
     />
 
-    <v-text-field 
-      prepend-inner-icon="mdi-calendar" 
-      v-model="modelLocal.birth_date" 
-      label="Data de nascimento" 
-      outlined 
-      v-mask="maskData" 
+    <v-text-field
+      prepend-inner-icon="mdi-calendar"
+      v-model="user.birth_date"
+      label="Data de nascimento"
+      outlined
+      v-mask="maskData"
       :rules="[vRequired, v => vDateLte(v, getDataAtual(), 'atual')]"
     />
 
     <template #actions>
-      <v-btn dark color="primary" class="action-button" @click="handleSubmit">
+      <v-btn
+        dark
+        color="primary"
+        class="action-button"
+        @click="handleSubmit"
+      >
         Continuar
       </v-btn>
 
-      <v-btn dark color="primary" class="action-button ml-0" outlined @click="$emit('voltar')">
+      <v-btn
+        dark
+        color="primary"
+        class="action-button ml-0"
+        outlined
+        @click="$router.push('/login')"
+      >
         Voltar
       </v-btn>
     </template>
@@ -32,55 +43,70 @@
 
 <script>
 import FormsComponent from '../FormsComponent.vue';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'StepOneComponent',
-
   components: {
     FormsComponent
   },
-
-  props : {
-    model : {
-        type : Object,
-        default: () => ({})
-    }
-  },
-
   data() {
     return {
-      step: 1,
-      modelLocal : {}
+      initialUser: {},
     };
   },
-  
+  computed: {
+    ...mapGetters('register', ['user', 'currentStep']),
+    model: {
+      get() {
+        return this.user;
+      },
+      set(value) {
+        this.$store.commit('register/SET_USER', value);
+      },
+    },
+  },
+  activated() {
+    this.initialUser = { ...this.user };
+  },
   methods: {
+    ...mapActions('register', ['setStep', 'createUser', 'updateUser']),
     getDataAtual() {
       return new Date();
     },
-
     async handleSubmit() {
       const isValid = await this.$refs.form.validate();
 
       if (isValid) {
-        this.$emit('submit', this.modelLocal);
+        try {
+          if (!this.user.id) {
+
+            await this.createUser();
+            localStorage.setItem("step", this.currentStep+1);
+            this.aviso('Primeira etapa concluída com sucesso!');
+
+          } else {
+
+            const updatedFields = this.$clearData(this.user, this.initialUser);
+
+            if (Object.keys(updatedFields).length > 0) {
+              const msg = await this.updateUser(updatedFields);
+              this.aviso(msg);
+            }
+
+          }
+
+          this.setStep(this.currentStep + 1);
+         
+          
+        } catch (err) {
+          this.avisoErro(err);
+        }
+
       } else {
-        console.error('Formulário inválido!');
+        this.avisoErro('Por favor, preencha os campos obrigatórios para prosseguir para a próxima etapa.');
       }
     },
   },
-
-  watch: {
-    model: {
-      immediate: true, 
-      handler(newValue) {
-        if(newValue){
-          this.modelLocal = { ...newValue }; 
-          console.log('Model atualizado:', this.modelLocal);
-        }
-      },
-    },
-  },
-
 };
 </script>

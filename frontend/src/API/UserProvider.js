@@ -12,7 +12,7 @@ export default {
 
     detail: function (id, args) {
       get({
-        url: `${API_PATH}/user/${id}`,
+        url: `${API_PATH}/user/${id}/detail`,
         ...args,
       });
     },

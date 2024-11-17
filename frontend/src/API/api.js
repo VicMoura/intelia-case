@@ -1,10 +1,9 @@
 import axios from "axios";
 
 export const API_PATH = process.env.VUE_APP_API_PATH;
+export const API_PATH_IBGE = "https://servicodados.ibge.gov.br/api/v1/localidades";
 
 function core(args) {
-    console.log(args)
-    console.log(process.env.VUE_APP_API_PATH)
   axios({
     url: args.url,
     method: args.method,

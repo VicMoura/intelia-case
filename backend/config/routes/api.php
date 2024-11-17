@@ -39,8 +39,8 @@ $routes->add('api_phone_update', new Route('/phone/{id}', [
     '_controller' => 'App\Controller\PhonesController::update',
 ], ['methods' => 'PUT']));
 
-$routes->add('api_user_show', new Route('/user/{id}', [
-    '_controller' => 'App\Controller\UserController::show',
+$routes->add('api_user_show', new Route('/user/{id}/detail', [
+    '_controller' => 'App\Controller\UserController::detail',
 ], ['methods' => 'GET'])); 
 
 return $routes;

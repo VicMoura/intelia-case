@@ -17,10 +17,10 @@ class Phones
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user_id = null;
 
-    #[ORM\Column(length: 20)]  // Adicionando unique=true para phone_type
+    #[ORM\Column(length: 20)]  
     private ?string $phone_type = null;
 
-    #[ORM\Column(length: 15)]  // Adicionando unique=true para phone_number
+    #[ORM\Column(length: 15)] 
     private ?string $phone_number = null;
 
     public function getId(): ?int
@@ -64,7 +64,7 @@ class Phones
         return $this;
     }
 
-    // Método Detail
+    
     public function detail(): array
     {
         return [
@@ -76,7 +76,7 @@ class Phones
     }
 
 
-    // Método Detail
+    
     public function toArray(): array
     {
         return [

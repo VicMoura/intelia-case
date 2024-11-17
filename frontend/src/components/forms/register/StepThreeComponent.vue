@@ -1,34 +1,30 @@
 <template>
-  <FormsComponent 
-    title="Cadastrar"
-    ref="form"
-  >
-    <div v-for="(phone, index) in modelLocal.phones" :key="index" class="phone-item">
+  <FormsComponent title="Cadastrar" ref="form" :currentStep="currentStep">
+    <div v-for="(item, index) in phone.phones" :key="index" class="phone-item">
       <v-switch
-        v-model="phone.phone_type"
+        v-model="item.phone_type"
         inset
-        :label="phone.phone_type === 'mobile' ? 'Celular' : 'Fixo'"
+        :label="item.phone_type === 'mobile' ? 'Celular' : 'Fixo'"
         :false-value="'fixed'"
         :true-value="'mobile'"
-      >
-      </v-switch>
+      ></v-switch>
 
-      <v-text-field 
-        prepend-inner-icon="mdi-phone" 
-        :label="'Telefone ' + (phone.phone_type === 'mobile' ? 'Celular' : 'Fixo')" 
+      <v-text-field
+        prepend-inner-icon="mdi-phone"
+        :label="'Telefone ' + (item.phone_type === 'mobile' ? 'Celular' : 'Fixo')"
         outlined
-        v-model="phone.phone_number"
-        v-mask="phone.phone_type === 'mobile' ? maskTelCel : maskTel"
+        v-model="item.phone_number"
+        v-mask="item.phone_type === 'mobile' ? maskTelCel : maskTel"
         :rules="[vRequired]"
       >
         <!-- Botão de excluir dentro do campo de telefone -->
         <template #append>
           <v-btn
-            v-if="modelLocal.phones.length > 1"
+            v-if="phone.phones.length > 1"
             class="delete-btn"
-            icon 
+            icon
             @click="removePhone(index)"
-            :aria-label="'Excluir telefone ' + (phone.phone_type === 'mobile' ? 'Celular' : 'Fixo')"
+            :aria-label="'Excluir telefone ' + (item.phone_type === 'mobile' ? 'Celular' : 'Fixo')"
           >
             <v-icon>mdi-delete</v-icon>
           </v-btn>
@@ -37,44 +33,30 @@
     </div>
 
     <!-- Botão para adicionar mais telefones -->
-     <v-container class="d-flex justify-center">
-        <v-btn 
-            dark
-            color="primary"
-            @click="addPhone"
-            icon
-            outlined
-            >
-            <v-icon>mdi-plus</v-icon>
-        </v-btn>
-     </v-container>
-    
+    <v-container class="d-flex justify-center">
+      <v-btn dark color="primary" @click="addPhone" icon outlined>
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </v-container>
+
     <template #actions>
-      <v-btn 
-        dark
-        color="primary"
-        class="action-button"
-        @click="handleSubmit"
-      >
-        Continuar 
+      <v-btn dark color="primary" class="action-button" @click="handleSubmit">
+        Continuar
       </v-btn>
 
-      <v-btn 
-        dark
-        color="primary"
-        class="action-button ml-0"
-        outlined
-        @click="$emit('voltar')"
-      >
+      <v-btn dark color="primary" class="action-button ml-0" outlined @click="setStep(currentStep - 1)">
         Voltar
       </v-btn>
     </template>
-
   </FormsComponent>
 </template>
 
+
 <script>
 import FormsComponent from '../FormsComponent.vue';
+
+import { mapGetters, mapActions } from "vuex";
+
 
 export default {
   name: 'StepThreeComponent',
@@ -83,71 +65,64 @@ export default {
     FormsComponent
   },
 
-  props : {
-    model : {
-        type : Object,
-        default: () => ({})
-    }
-  },
 
   data() {
     return {
-      modelLocal: {
-        phones: [
-          {
-            phone_type: 'mobile', 
-            phone_number: ''
-          }
-        ],
-      },
+
     };
   },
 
-  computed : {
-        mask() {
-            
-            let phoneOnlyNumbers = this.modelLocal.celular.replace(/[\s()-]/g, '');
-            
-            return phoneOnlyNumbers.length > 10 ? this.maskTelCel : this.maskTel;
-        }
+  computed: {
+    ...mapGetters("register", ["currentStep", "phone"]),
+    model: {
+      get() {
+        return this.phone;
+      },
+      set(value) {
+        this.$store.commit("register/SET_PHONE", value);
+      }
     },
+  },
 
   methods: {
+    ...mapActions("register", ["setStep", "createPhone", "resetState"]),
+
     async handleSubmit() {
-      const isValid = await this.$refs.form.validate(); 
+
+      const isValid = await this.$refs.form.validate();
+
       if (isValid) {
-        this.$emit('submit', this.modelLocal.phones); 
+        
+        this.createPhone(this.phone.phones)
+          .then((result) => {
+            this.aviso(result);
+            this.resetState();
+            this.$router.push('login');
+          })
+          .catch((error) => {
+            this.avisoErro(error);
+          });
+
+        
       } else {
-        console.error('Formulário inválido!');
+        this.avisoErro('Por favor, preencha os campos obrigatórios para finalizar o cadastro.');
       }
+      
     },
 
     addPhone() {
-
-        this.modelLocal.phones.push({
-        phone_type: 'mobile', 
+      this.phone.phones.push({
+        phone_type: 'mobile',
         phone_number: ''
       });
 
     },
 
     removePhone(index) {
-        this.modelLocal.phones.splice(index, 1);
+      this.phone.phones.splice(index, 1);
     },
   },
 
-  watch: {
-      model: {
-        immediate: true,
-        handler(newValue) {
-          console.log(newValue);
-          if(newValue.phones.length > 0){
-            this.modelLocal.phones = { ...newValue.phones };
-            console.log('Model atualizado:', this.modelLocal);
-         }
-        },
-      },
-    },
 };
 </script>
 
@@ -158,8 +133,8 @@ export default {
 
 .delete-btn {
   position: absolute;
-  right: 5px; 
+  right: 5px;
   top: 50%;
-  transform: translateY(-50%); 
+  transform: translateY(-50%);
 }
 </style>

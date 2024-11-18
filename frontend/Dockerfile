@@ -1,15 +1,17 @@
-# Dockerfile para o frontend Vue.js
+# Dockerfile do frontend (Node.js)
 FROM node:16
 
+# Definir o diretório de trabalho
 WORKDIR /app
 
-COPY package*.json ./
-
-# Instalar dependências do Vue.js
-RUN npm install
-
+# Copiar os arquivos do frontend
 COPY . .
 
-EXPOSE 8080
+# Instalar as dependências do frontend
+RUN npm install
 
-CMD ["npm", "run", "serve"]
+# Expor a porta
+EXPOSE 3000
+
+# Definir o comando para rodar a aplicação
+CMD ["npm", "start"]

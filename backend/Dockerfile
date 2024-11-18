@@ -1,32 +1,26 @@
-# Usar imagem base do PHP 8.2 CLI
+# Dockerfile do backend PHP/Symfony
 FROM php:8.2-cli
 
-# Instalar dependências do sistema
+# Instalar dependências e extensões necessárias
 RUN apt-get update && apt-get install -y \
     libicu-dev \
     libpq-dev \
     git \
     unzip \
     zip \
-    && docker-php-ext-install intl pdo_mysql \
+    php8.2-xml \  # Instalar a extensão xml
+    && docker-php-ext-install intl pdo_mysql xml \  # Habilitar a extensão xml
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copiar o Composer (caso o comando anterior falhe)
+# Copiar o Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Definir o diretório de trabalho
 WORKDIR /var/www/html
 
-# Copiar todos os arquivos do backend, incluindo o composer.json e composer.lock
+# Copiar os arquivos do backend, incluindo composer.json
 COPY . .
 
-# Instalar dependências do projeto incluindo Symfony Runtime
-RUN composer install --no-scripts --prefer-dist --no-progress
-
-# Garantir que o Symfony Runtime esteja instalado
-RUN composer require symfony/runtime
-
-# Atualizar o Composer (opcional)
+# Instalar dependências do PHP
 RUN composer self-update 2.1.0
 
 # Copiar o script de inicialização

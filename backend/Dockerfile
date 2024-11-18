@@ -24,13 +24,16 @@ WORKDIR /var/www/html
 # Copiar os arquivos do backend (incluindo composer.json)
 COPY . .
 
-# Instalar as dependências do PHP
-RUN composer install --no-plugins --no-scripts
+RUN composer install \
+    --no-interaction \
+    --no-scripts
 
-# Atualizar o Composer e as dependências
-RUN composer self-update 2.1.0 && composer update -W
+# By default, Composer runs as root inside the container.
+# This can lead to permission issues on your host filesystem.
 
-RUN composer require symfony/runtime
+RUN chown -R 1000:1000 vendor
+
+RUN chmod -R 775 vendor
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 

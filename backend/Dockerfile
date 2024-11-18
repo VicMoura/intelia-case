@@ -2,13 +2,9 @@
 FROM php:8.2-cli
 
 # Instalar dependências
-RUN apt-get update && apt-get install -y composer \
-    libicu-dev \
-    libpq-dev \
-    git \
-    unzip \
-    zip \
-    && docker-php-ext-install intl pdo_mysql
+RUN apt-get update && apt-get install -y libicu-dev libpq-dev git unzip zip \
+    && docker-php-ext-install intl pdo_mysql \
+    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Copiar o Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

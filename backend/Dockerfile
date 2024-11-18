@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-# Instalar dependências
+# Instalar dependências do sistema
 RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libicu-dev \
@@ -8,22 +8,23 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     zip \
+    wget \
     && docker-php-ext-install xml intl pdo_mysql
 
-
-RUN apt-get update && apt-get install -y \
-    libxml2-dev \
-    && docker-php-ext-install xml
+# Instalar o Symfony CLI (caso precise)
+RUN wget https://get.symfony.com/cli/installer -O - | bash \
+    && mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
 
 # Copiar o Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Definir o diretório de trabalho
 WORKDIR /var/www/html
 
-# Copiar os arquivos do backend, incluindo composer.json
+# Copiar os arquivos do backend (incluindo composer.json)
 COPY . .
 
-# Instalar dependências do PHP
+# Instalar as dependências do PHP
 RUN composer install --no-plugins --no-scripts
 
 # Atualizar o Composer e as dependências

@@ -2,7 +2,7 @@
 FROM php:8.2-cli
 
 # Instalar dependências
-RUN apt-get update && apt-get install -y composer \
+RUN apt-get update && apt-get install -y \
     libicu-dev \
     libpq-dev \
     git \

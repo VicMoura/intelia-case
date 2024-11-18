@@ -30,14 +30,8 @@ RUN composer install --no-plugins --no-scripts
 # Atualizar o Composer e as dependências
 RUN composer self-update 2.1.0 && composer update -W
 
-# Copiar o script de inicialização
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
-# Tornar o script executável
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# Configurar o entrypoint
-ENTRYPOINT ["docker-entrypoint.sh"]
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Expor a porta e configurar o comando de entrada
 EXPOSE 8000

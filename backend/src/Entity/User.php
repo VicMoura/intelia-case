@@ -34,9 +34,6 @@ class User
     #[ORM\OneToMany(mappedBy: 'user_id', targetEntity: Phones::class, orphanRemoval: true)]
     private Collection $phones;
 
-    #[ORM\OneToOne(mappedBy: 'user_id', cascade: ['persist', 'remove'])]
-    private ?UserStep $userStep = null;
-
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -154,29 +151,6 @@ class User
 
         return $this;
     }
-
-    public function getUserStep(): ?UserStep
-    {
-        return $this->userStep;
-    }
-
-    public function setUserStep(?UserStep $userStep): static
-    {
-        // unset the owning side of the relation if necessary
-        if ($userStep === null && $this->userStep !== null) {
-            $this->userStep->setUserId(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($userStep !== null && $userStep->getUserId() !== $this) {
-            $userStep->setUserId($this);
-        }
-
-        $this->userStep = $userStep;
-
-        return $this;
-    }
-
 
     public function detail(): array
     {

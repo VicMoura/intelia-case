@@ -13,7 +13,6 @@ use App\Validator\UserValidator;
 class UserController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
-    private $userValidator;
 
 
     // Injeção de dependência via construtor

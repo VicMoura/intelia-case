@@ -7,7 +7,7 @@
       outlined
       v-mask="maskCEP"
       v-model="address.zip_code"
-      :rules="[vRequired]"
+      :rules="[vRequired, vValidCEP]"
     />
 
     <v-text-field
@@ -23,7 +23,7 @@
       type="number"
       v-model="address.number"
       outlined
-       :rules="[vRequired, vPositive]"
+       :rules="[vRequired, vPositive, v => vMaxLength(v, 5)]"
     />
 
     <v-select
@@ -49,6 +49,7 @@
         color="primary"
         class="action-button"
         @click="handleSubmit"
+        :disabled="isSubmitting" 
       >
         Continuar
       </v-btn>
@@ -80,6 +81,7 @@ export default {
       states: [], // Lista de estados
       cities: [], // Lista de cidades
       initialAddress: {},
+      isSubmitting : false
     };
   },
   computed: {
@@ -120,7 +122,7 @@ export default {
           value: state.sigla,
         }));
       } catch (error) {
-        console.error("Erro ao buscar estados:", error);
+        this.avisoErro("Erro ao buscar estados:", error);
       }
     },
 
@@ -141,13 +143,20 @@ export default {
           value: city.nome,
         }));
       } catch (error) {
-        console.error("Erro ao buscar cidades:", error);
+        this.avisoErro("Erro ao buscar cidades:", error);
       }
     },
 
     async handleSubmit() {
+
+      if (this.isSubmitting) return;
+
       const isValid = await this.$refs.form.validate();
+
       if (isValid) {
+
+        this.isSubmitting = true;
+
         try {
           if (!this.address.id) {
             await this.createAddress(this.model);
@@ -166,7 +175,10 @@ export default {
           
         } catch (err) {
           this.avisoErro(err);
+        } finally {
+          this.isSubmitting = false;
         }
+
       } else {
         this.avisoErro(
           "Por favor, preencha os campos obrigatórios para prosseguir para a próxima etapa."

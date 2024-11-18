@@ -21,9 +21,14 @@ class AddressValidator
         }
 
         // Verificar se o campo "number" é numérico
-        if (isset($data['number']) && !is_numeric($data['number'])) {
-            $errors[] = 'O campo "Número" deve ser numérico.';
+        if (isset($data['number'])) {
+            if (!is_numeric($data['number'])) {
+                $errors[] = 'O campo "Número" deve ser numérico.';
+            } elseif (strlen((string)$data['number']) > 10) {
+                $errors[] = 'O campo "Número" deve ter no máximo 10 dígitos.';
+            }
         }
+        
 
         // Validar o "zip_code" (CEP) - formato brasileiro
         if (isset($data['zip_code']) && !preg_match('/^\d{5}-\d{3}$/', $data['zip_code'])) {

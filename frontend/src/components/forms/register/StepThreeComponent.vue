@@ -40,7 +40,7 @@
     </v-container>
 
     <template #actions>
-      <v-btn dark color="primary" class="action-button" @click="handleSubmit">
+      <v-btn dark color="primary" class="action-button" @click="handleSubmit" :disabled="isSubmitting">
         Continuar
       </v-btn>
 
@@ -68,7 +68,7 @@ export default {
 
   data() {
     return {
-
+      isSubmitting : false
     };
   },
 
@@ -89,17 +89,23 @@ export default {
 
     async handleSubmit() {
 
+      if (this.isSubmitting) return;
+
       const isValid = await this.$refs.form.validate();
 
       if (isValid) {
-        
+
+        this.isSubmitting = true;
+
         this.createPhone(this.phone.phones)
           .then((result) => {
             this.aviso(result);
             this.resetState();
             this.$router.push('login');
+            this.isSubmitting = true;
           })
           .catch((error) => {
+            this.isSubmitting = true;
             this.avisoErro(error);
           });
 

@@ -14,8 +14,6 @@ const opts = {
         themes : {
             light: {
                 primary : colors.shades.black,
-                secondary: colors.grey.lighten4,
-                botton : colors.blue.darken2
             }
         }
     }

@@ -67,6 +67,7 @@ class PhonesController extends AbstractController
                 'message' => 'Telefones cadastrados com sucesso!',
                 'phones' => array_map(fn($phone) => $phone->detail(), $phones)
             ], 201);
+            
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
             return $this->json(['error' => 'Não é possível inserir dois números iguais com o mesmo tipo.'], 400);
         } catch (\Exception $e) {
@@ -109,7 +110,7 @@ class PhonesController extends AbstractController
                 'message' => 'Telefone atualizado com sucesso!',
                 'phone' => $phone->detail(),
             ]);
-            
+
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
             return $this->json(['error' => 'Não é possível inserir dois números iguais com o mesmo tipo.'], 400);
         } catch (\Exception $e) {

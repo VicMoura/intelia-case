@@ -73,6 +73,26 @@ Vue.mixin({
             const today = moment();
             const age = today.diff(date, "years");
             return age >= 18 ? true : "Você precisa ter pelo menos 18 anos!";
+        },
+
+        vMaxLength(v, maxLength) {
+            const stringValue = v ? v.toString() : "";
+            return stringValue.length > maxLength
+                ? `O campo deve ter no máximo ${maxLength} caracteres.`
+                : true;
+        },
+
+        vValidCEP(v) {
+            const cepPattern = /^\d{5}-\d{3}$/;
+            if (!v) {
+                return true;
+            }
+
+            if (!cepPattern.test(v)) {
+                return "O CEP deve estar no formato XXXXX-XXX.";
+            }
+
+            return true;
         }
     }
 })

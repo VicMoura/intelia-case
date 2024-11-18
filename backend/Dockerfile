@@ -21,6 +21,15 @@ COPY . .
 # Instalar dependências do PHP
 RUN composer self-update 2.1.0
 
+# Copiar o script de inicialização
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+# Tornar o script executável
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Configurar o entrypoint
+ENTRYPOINT ["docker-entrypoint.sh"]
+
 # Expor a porta e configurar o comando de entrada
 EXPOSE 8000
 CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]

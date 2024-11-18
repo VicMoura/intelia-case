@@ -15,7 +15,7 @@
       label="Data de nascimento"
       outlined
       v-mask="maskData"
-      :rules="[vRequired, v => vDateLte(v, getDataAtual(), 'atual')]"
+      :rules="[vRequired, v => vDateLte(v, getDataAtual(), 'atual'), vIsAdult]"
     />
 
     <template #actions>
@@ -24,6 +24,7 @@
         color="primary"
         class="action-button"
         @click="handleSubmit"
+        :disabled="isSubmitting" 
       >
         Continuar
       </v-btn>
@@ -47,14 +48,18 @@ import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'StepOneComponent',
+
   components: {
     FormsComponent
   },
+
   data() {
     return {
       initialUser: {},
+      isSubmitting : false
     };
   },
+
   computed: {
     ...mapGetters('register', ['user', 'currentStep']),
     model: {
@@ -66,18 +71,27 @@ export default {
       },
     },
   },
+
   activated() {
     this.initialUser = { ...this.user };
   },
+
   methods: {
     ...mapActions('register', ['setStep', 'createUser', 'updateUser']),
+
     getDataAtual() {
       return new Date();
     },
+
     async handleSubmit() {
+      if (this.isSubmitting) return; // Evita múltiplas execuções
+
       const isValid = await this.$refs.form.validate();
 
       if (isValid) {
+
+        this.isSubmitting = true; // Inicia a submissão
+        
         try {
           if (!this.user.id) {
 
@@ -95,12 +109,13 @@ export default {
             }
 
           }
-
+          
           this.setStep(this.currentStep + 1);
-         
           
         } catch (err) {
           this.avisoErro(err);
+        } finally {
+          this.isSubmitting = false;
         }
 
       } else {

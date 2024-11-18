@@ -15,7 +15,7 @@
         outlined
         v-model="item.phone_number"
         v-mask="item.phone_type === 'mobile' ? maskTelCel : maskTel"
-        :rules="[vRequired]"
+        :rules="[vRequired, vValidPhoneNumber]"
       >
         <!-- Botão de excluir dentro do campo de telefone -->
         <template #append>

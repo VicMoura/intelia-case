@@ -35,6 +35,16 @@ RUN chown -R 1000:1000 vendor
 
 RUN chmod -R 775 vendor
 
+# Copiar o script de inicialização
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+# Tornar o script executável
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Configurar o entrypoint
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Expor a porta e configurar o comando de entrada

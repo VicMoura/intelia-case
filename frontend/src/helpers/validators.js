@@ -93,6 +93,23 @@ Vue.mixin({
             }
 
             return true;
+        },
+
+        vValidPhoneNumber(v) {
+            // Padrão para telefones no formato: (99) 99999-9999 ou (99) 9999-9999
+            const phonePattern = /^\(?\d{2}\)? ?\d{4,5}-\d{4}$/;
+        
+            // Permite valor vazio
+            if (!v) {
+                return true;
+            }
+        
+            if (!phonePattern.test(v)) {
+                return "O telefone deve estar no formato (XX) XXXXX-XXXX ou (XX) XXXX-XXXX.";
+            }
+        
+            return true;
         }
+        
     }
 })

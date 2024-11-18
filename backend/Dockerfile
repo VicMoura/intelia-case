@@ -30,7 +30,6 @@ RUN composer install --no-plugins --no-scripts
 # Atualizar o Composer e as dependências
 RUN composer self-update 2.1.0 && composer update -W
 
-
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Expor a porta e configurar o comando de entrada

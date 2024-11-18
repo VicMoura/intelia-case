@@ -11,20 +11,22 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install intl pdo_mysql \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Copiar o Composer
+# Copiar o Composer (caso o comando anterior falhe)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Definir o diretório de trabalho
 WORKDIR /var/www/html
 
-# Copiar os arquivos do backend, incluindo composer.json e composer.lock
+# Copiar todos os arquivos do backend, incluindo o composer.json e composer.lock
 COPY . .
 
-# Instalar dependências do projeto e o Symfony Runtime
-RUN composer install --no-scripts --no-progress && \
-    composer require symfony/runtime
+# Instalar dependências do projeto incluindo Symfony Runtime
+RUN composer install --no-scripts --prefer-dist --no-progress
 
-# Atualizar o Composer para uma versão estável específica (opcional)
+# Garantir que o Symfony Runtime esteja instalado
+RUN composer require symfony/runtime
+
+# Atualizar o Composer (opcional)
 RUN composer self-update 2.1.0
 
 # Copiar o script de inicialização

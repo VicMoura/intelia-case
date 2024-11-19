@@ -102,10 +102,10 @@ export default {
             this.aviso(result);
             this.resetState();
             this.$router.push('login');
-            this.isSubmitting = true;
+            this.isSubmitting = false;
           })
           .catch((error) => {
-            this.isSubmitting = true;
+            this.isSubmitting = false;
             this.avisoErro(error);
           });
 
